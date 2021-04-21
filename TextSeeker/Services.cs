@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace TextSeeker
@@ -15,6 +15,7 @@ namespace TextSeeker
     public interface IDataService
     {
         Task<string> GetText(string uri);
+        List<string> DivideByParts(string text, int partSize);
     }
 
     public interface IMatcherService
@@ -29,12 +30,29 @@ namespace TextSeeker
     }
 
     // =======================================
-    // Data Text Feed Serice
+    // Data Text Service
     // =======================================
 
     public class DataFeed : IDataService
     {
         static readonly HttpClient client = new HttpClient();
+
+        public List<string> DivideByParts(string text, int partSize)
+        {
+            List<string> parts = new List<string>();
+            var lines = text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            for (var i = 0; i < (lines.Length + partSize); i += partSize)
+            {
+                var part = lines.Skip(i).Take(partSize).ToArray();
+                if (part.Length > 0)
+                {
+                    parts.Add(string.Join("\r\n", part));
+                }
+            }
+
+            return parts;
+        }
 
         public async Task<string> GetText(string uri)
         {
@@ -48,8 +66,7 @@ namespace TextSeeker
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine("Message :{0} ", e.Message);
+                Console.WriteLine("Exception Caught - Message :{0} ", e.Message);
             }
 
             return responseBody;
@@ -71,12 +88,7 @@ namespace TextSeeker
 
         public Dictionary<string, List<Offset>> Find(List<string> names, string part, int lineOffset)
         {
-            var result = _technique.FindNames(names, part, lineOffset);
-
-            //var thread = Thread.CurrentThread;
-            //Console.WriteLine($"Thread ID: {thread.ManagedThreadId}, part length: {part.Length};");
-
-            return result;
+            return _technique.FindNames(names, part, lineOffset);
         }
     }
 
@@ -111,11 +123,7 @@ namespace TextSeeker
         {
             foreach (var item in total)
             {
-                if (item.Value.Count > 0)
-                {
-                    //Console.WriteLine($"{item.Key} --> {JsonSerializer.Serialize(item.Value)}");
-                    Console.WriteLine($"{item.Key} --> {item.Value.Count} --> {JsonSerializer.Serialize(item.Value)}");
-                }
+                Console.WriteLine($"{item.Key} --> {JsonSerializer.Serialize(item.Value)}");
             }
         }
     }
