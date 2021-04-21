@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+// Fastest Way to check if a string occurs within a string - https://cc.davelozinski.com/c-sharp/fastest-way-to-check-if-a-string-occurs-within-a-string
+// https://stackoverflow.com/questions/9380062/is-using-a-regular-expression-faster-than-indexof
+
 namespace TextSeeker
 {
     class Program
@@ -17,8 +20,8 @@ namespace TextSeeker
         static readonly IDataService dataService = new DataFeed();
 
         // text find approaches (uncomment necessary)
-        static readonly ITechnique typeTechnique = new RegexTechnique();
-        //static readonly ITechnique typeTechnique = new IndexOfTechnique();
+        //static readonly ITechnique typeTechnique = new RegexTechnique();
+        static readonly ITechnique typeTechnique = new IndexOfTechnique();
 
         static async Task Main(string[] args)
         {
