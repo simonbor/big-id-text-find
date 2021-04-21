@@ -5,6 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+// Fastest Way to check if a string occurs within a string - https://cc.davelozinski.com/c-sharp/fastest-way-to-check-if-a-string-occurs-within-a-string
+// https://stackoverflow.com/questions/9380062/is-using-a-regular-expression-faster-than-indexof
+
 namespace TextSeeker
 {
     class Program
